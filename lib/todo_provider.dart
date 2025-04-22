@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import './todo.dart';  // Import the Todo model class (assuming you have it in a separate file)
 
 class TodoProvider extends ChangeNotifier {
-  final List<Todo> _todos = [
-    Todo(id: "1", title: "eat"),
-    Todo(id: "2", title: "wakeup"),
-  ];
+  final List<Todo> _todos = [];
+  // final List<Todo> _filteredTodo = [];
+
+  int currTask = 0;
 
   List<Todo> get todos => _todos; 
 
@@ -16,6 +16,16 @@ class TodoProvider extends ChangeNotifier {
     } else {
       todo.markAsUnDone();
     }
+    notifyListeners();
+  }
+
+  void inputTodo(String title){
+    currTask = currTask+1;
+    final newTodo = Todo(
+      id: currTask.toString(),
+      title:  title
+    );
+    _todos.add(newTodo);
     notifyListeners();
   }
 }

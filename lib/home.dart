@@ -1,101 +1,70 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-// import './todo.dart';
+import 'package:todo_app/cards.dart';
+import 'package:todo_app/input.dart';
 import './todo_provider.dart';
 
-class Todos extends StatelessWidget {
+class Todos extends StatefulWidget {
   const Todos({super.key});
+
+  @override
+  State<Todos> createState() => _TodosState();
+}
+
+class _TodosState extends State<Todos> {
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        searchBar(context),
         titleTodo(context),
-        todoList(context)
+        searchTodo(context),
+        todoList(context),
+        InputNew()
       ],
+    );
+  }
+
+  Widget searchTodo(BuildContext context){
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 16.0),
+      child: TextField(
+        controller: _searchController,
+        decoration: 
+          InputDecoration(
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(16)),
+            ),
+            hintText: "Search Something Cool",
+            suffixIcon: Icon(
+              Icons.search
+            )
+          ),
+      ),
     );
   }
 
   Widget todoList(BuildContext context) {
     return Consumer<TodoProvider>(
-      builder: (BuildContext context, TodoProvider value, Widget? child) {
+      builder: (BuildContext context, TodoProvider value, child) {
         final todos = value.todos; // Access the todos from the provider
-        return Wrap(
-          children: todos.map(
-            (todo) => SizedBox(
-              child: Padding(
-                padding: const EdgeInsets.only(left: 16, right: 16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        todo.id,
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        todo.title,
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(8),
-                      child: Text(
-                        todo.isDone == true
-                          ? "Done"
-                          : "not done yet",
-                        style: TextStyle(
-                          color: Colors.white
-                        ),
-                      )
-                    ),
-                    Checkbox(
-                      value: todo.isDone, 
-                      onChanged: (bool? value){
-                        if (value != null){
-                          Provider.of<TodoProvider>(context, listen: false)
-                            .setDone(todo.id, value);
-                        }
-                      }
-                    )
-                  ],
-                ),
-              ),
-            ),
-          ).toList(),
+        return Expanded(
+          child: ListView.builder(
+            itemCount: todos.length,
+            itemBuilder: (BuildContext context, int index){
+              final todo = todos[index];
+              return TodoCard(todo: todo);
+            }
+          )
         );
-      },
-    );
-  }
-
-  Widget searchBar(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Container(
-        padding: EdgeInsets.all(1),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(32),
-          color: Colors.white,
-        ),
-        child: TextField(
-          style: TextStyle(color: Colors.black),
-          decoration: InputDecoration(
-            prefixIcon: Icon(Icons.search),
-            border: InputBorder.none,
-          ), 
-        ),
-      ),
+      }
     );
   }
 
   Widget titleTodo(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(top: 8),
+      padding: EdgeInsets.all(16),
       child: Text(
         "My TodoList",
         style: TextStyle(
