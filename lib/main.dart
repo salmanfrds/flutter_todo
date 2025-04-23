@@ -33,12 +33,9 @@ class MyLayout extends StatelessWidget {
   Widget build(BuildContext context){
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.grey,
+        centerTitle: true,
         title: Text(
           "Todo App",
-          style: TextStyle(
-            color: Colors.tealAccent
-          ),
         ),
       ),
       body: Todos(),

@@ -3,11 +3,18 @@ import './todo.dart';  // Import the Todo model class (assuming you have it in a
 
 class TodoProvider extends ChangeNotifier {
   final List<Todo> _todos = [];
-  // final List<Todo> _filteredTodo = [];
+  String _filterQuery = "";
 
   int currTask = 0;
 
   List<Todo> get todos => _todos; 
+  List<Todo> get filteredTodos {
+    if (_filterQuery.isEmpty){
+      return _todos;
+    } else {
+      return _todos.where((todo) => todo.title.toLowerCase().contains(_filterQuery.toLowerCase())).toList();
+    }
+  }
 
   void setDone(String id, bool done){
     final todo = _todos.firstWhere((todo) => todo.id == id);
@@ -27,5 +34,10 @@ class TodoProvider extends ChangeNotifier {
     );
     _todos.add(newTodo);
     notifyListeners();
+  }
+
+  void updateFilter(String query){
+    _filterQuery = query;
+    notifyListeners(); 
   }
 }

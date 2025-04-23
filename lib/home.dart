@@ -18,7 +18,6 @@ class _TodosState extends State<Todos> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        titleTodo(context),
         searchTodo(context),
         todoList(context),
         InputNew()
@@ -28,19 +27,13 @@ class _TodosState extends State<Todos> {
 
   Widget searchTodo(BuildContext context){
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16.0),
-      child: TextField(
+      margin: EdgeInsets.all(16.0),
+      child: SearchBar(
         controller: _searchController,
-        decoration: 
-          InputDecoration(
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.all(Radius.circular(16)),
-            ),
-            hintText: "Search Something Cool",
-            suffixIcon: Icon(
-              Icons.search
-            )
-          ),
+        leading: Icon(Icons.search),
+        onChanged: (query){
+          context.read<TodoProvider>().updateFilter(_searchController.text);
+        },
       ),
     );
   }
@@ -48,7 +41,7 @@ class _TodosState extends State<Todos> {
   Widget todoList(BuildContext context) {
     return Consumer<TodoProvider>(
       builder: (BuildContext context, TodoProvider value, child) {
-        final todos = value.todos; // Access the todos from the provider
+        final todos = value.filteredTodos; // Access the todos from the provider
         return Expanded(
           child: ListView.builder(
             itemCount: todos.length,
